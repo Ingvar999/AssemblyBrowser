@@ -23,6 +23,8 @@ namespace AssemblyBrowser
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new AssemblyReader(AssemblyTreeView.ItemsSource);
+            AssemblyTreeView
         }
     }
 }
