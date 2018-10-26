@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyBrowser", "Assembly
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyInfoGetterLib", "AssemblyInfoGetterLib\AssemblyInfoGetterLib.csproj", "{1EBFC722-0C91-4E76-BBD1-D0C49B764347}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDll", "TestDll\TestDll.csproj", "{D34ACEF2-AB85-4840-9A91-367376E4D444}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1EBFC722-0C91-4E76-BBD1-D0C49B764347}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EBFC722-0C91-4E76-BBD1-D0C49B764347}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EBFC722-0C91-4E76-BBD1-D0C49B764347}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D34ACEF2-AB85-4840-9A91-367376E4D444}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D34ACEF2-AB85-4840-9A91-367376E4D444}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D34ACEF2-AB85-4840-9A91-367376E4D444}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D34ACEF2-AB85-4840-9A91-367376E4D444}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

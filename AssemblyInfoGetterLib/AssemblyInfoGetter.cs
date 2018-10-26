@@ -1,17 +1,20 @@
 ﻿using System;
 using Microsoft.Win32;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AssemblyInfoGetterLib
 {
     public class AssemblyInfoGetter : IInfoGetter
     {
+        private Assembly assembly;
+
         public Node GetFileInfo(string fileName)
         {
-            Assembly assembly = Assembly.LoadFrom(fileName);
+            assembly = Assembly.LoadFrom(fileName);
             Node info = new Node(assembly.FullName);
             foreach (var type in assembly.GetTypes())
             {
@@ -47,12 +50,16 @@ namespace AssemblyInfoGetterLib
 
         private void GetTypeInfo(ObservableCollection<Node> tree, Type type)
         {
-            Node typeInfo = new Node(type.Name);
-            tree.Add(typeInfo);
+            if (!type.IsDefined(typeof(ExtensionAttribute), false))
+            {
+                Node typeInfo = new Node(type.Name);
+                tree.Add(typeInfo);
 
-            GetMembersInfo(typeInfo.Nodes, type.GetFields(), "Fields");
-            GetMembersInfo(typeInfo.Nodes, type.GetProperties(), "Properties");
-            GetMembersInfo(typeInfo.Nodes, type.GetMethods(), "Methods");
+                GetMembersInfo(typeInfo.Nodes, type.GetFields(), "Fields");
+                GetMembersInfo(typeInfo.Nodes, type.GetProperties(), "Properties");
+                GetMembersInfo(typeInfo.Nodes, type.GetMethods(), "Methods");
+                GetMembersInfo(typeInfo.Nodes, GetExtensionMethods(type), "Extension methods");
+            }
         }
 
         private void GetMembersInfo(ObservableCollection<Node> tree, object[] members, string header)
@@ -67,6 +74,28 @@ namespace AssemblyInfoGetterLib
                     membersInfo.Nodes.Add(memberInfo);
                 }
             }
+        }
+
+        private MethodInfo[] GetExtensionMethods(Type extendedType)
+        {
+            List<MethodInfo> list = new List<MethodInfo>();
+            foreach(var type in assembly.GetTypes())
+            {
+                if (type.IsSealed && !type.IsGenericType && !type.IsNested)
+                {
+                    foreach(var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                    {
+                        if (method.IsDefined(typeof(ExtensionAttribute), false))
+                        {
+                            if (method.GetParameters()[0].ParameterType == extendedType)
+                            {
+                                list.Add(method);
+                            }
+                        }
+                    }
+                }
+            }
+            return list.ToArray();
         }
     }
 }
