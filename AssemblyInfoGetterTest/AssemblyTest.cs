@@ -43,6 +43,27 @@ namespace AssemblyInfoGetterTest
         }
 
         [TestMethod]
+        public void FieldsIdentifyTest()
+        {
+            Node actual = Setup();
+            Assert.AreEqual("Fields", actual.Nodes[0].Nodes[0].Nodes[0].Nodes[0].Content);
+        }
+
+        [TestMethod]
+        public void PropertiesIdentifyTest()
+        {
+            Node actual = Setup();
+            Assert.AreEqual("Properties", actual.Nodes[0].Nodes[0].Nodes[0].Nodes[1].Content);
+        }
+
+        [TestMethod]
+        public void MethodsIdentifyTest()
+        {
+            Node actual = Setup();
+            Assert.AreEqual("Methods", actual.Nodes[0].Nodes[0].Nodes[0].Nodes[2].Content);
+        }
+
+        [TestMethod]
         public void ExtensionMethodsIdentifyTest()
         {
             Node actual = Setup();

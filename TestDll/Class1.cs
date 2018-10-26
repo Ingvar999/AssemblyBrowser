@@ -13,6 +13,7 @@ namespace TestDll
             public int field;
             public int Property { get; set; }
             public void Method1() { }
+            public int[] arr;
         }
 
         public static class Class1Ext
