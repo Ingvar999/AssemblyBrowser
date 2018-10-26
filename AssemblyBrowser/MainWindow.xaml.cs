@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
 
 namespace AssemblyBrowser
 {
@@ -23,8 +24,9 @@ namespace AssemblyBrowser
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new AssemblyReader(AssemblyTreeView.ItemsSource);
-            AssemblyTreeView
+            var root = new ObservableCollection<Node>();
+            AssemblyTreeView.ItemsSource = root;
+            DataContext = new AssemblyReader(root);
         }
     }
 }

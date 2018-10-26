@@ -7,18 +7,19 @@ using Microsoft.Win32;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.IO;
+using System.Reflection;
+using System.Collections.ObjectModel;
 
 namespace AssemblyBrowser
 {
     public class AssemblyReader : INotifyPropertyChanged
     {
         public OpenCommand OpenCommand { get; private set; }
-        private IEnumerable sourceView;
+        private ObservableCollection<Node> root;
 
-        public AssemblyReader(TreeView sourceView)
+        public AssemblyReader(ObservableCollection<Node> root)
         {
-            this.sourceView = sourceView;
+            this.root = root;
             OpenCommand = new OpenCommand(OpenHandler);
         }
 
@@ -35,17 +36,63 @@ namespace AssemblyBrowser
             dialog.Filter = "(*.dll)|*.dll";
             if (dialog.ShowDialog() == true)
             {
-                Node assemblyInfo = GetAssemblyInfo(dialog.FileName);
-                sourceView = (IEnumerable)assemblyInfo;
+                root.Clear();
+                root.Add(GetAssemblyInfo(dialog.FileName));
                 OnPropertyChanged();
             }
         }
 
         private Node GetAssemblyInfo(string fileName)
         {
-            Node info = new Node();
-            info.Content = fileName;
+            Assembly assembly = Assembly.LoadFrom(fileName);
+            Node info = new Node(assembly.FullName);
+            foreach (var type in assembly.GetTypes())
+            {
+                GetTypeInfo(SearchNamespaceEntry(info.Nodes, type.ToString()), type);
+            }
             return info;
+        }
+
+        private ObservableCollection<Node> SearchNamespaceEntry(ObservableCollection<Node> tree, string typeName)
+        {
+            int dotIndex = typeName.IndexOf('.');
+            if (dotIndex == -1)
+            {
+                return tree;
+            }
+            Node match = null;
+            string namespaceName = typeName.Substring(0, dotIndex);
+            foreach (var node in tree)
+            {
+                if (node.Content == namespaceName)
+                {
+                    match = node;
+                    break;
+                }
+            }
+            if (match == null)
+            {
+                match = new Node(namespaceName);
+                tree.Add(match);
+            }
+            return SearchNamespaceEntry(match.Nodes, typeName.Substring(dotIndex + 1));
+        }
+
+        private void GetTypeInfo(ObservableCollection<Node> tree, Type type)
+        {
+            Node typeInfo = new Node(type.Name);
+            tree.Add(typeInfo);
+            FieldInfo[] fields = type.GetFields();
+            if (fields.Length > 0)
+            {
+                Node fieldsInfo = new Node("Fields");
+                typeInfo.Nodes.Add(fieldsInfo);
+                foreach(var field in fields)
+                {
+                    Node fieldInfo = new Node(field.ToString());
+                    fieldsInfo.Nodes.Add(fieldInfo);
+                }
+            }
         }
     }
 }
