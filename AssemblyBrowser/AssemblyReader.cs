@@ -82,15 +82,22 @@ namespace AssemblyBrowser
         {
             Node typeInfo = new Node(type.Name);
             tree.Add(typeInfo);
-            FieldInfo[] fields = type.GetFields();
-            if (fields.Length > 0)
+
+            GetMembersInfo(typeInfo.Nodes, type.GetFields(), "Fields");
+            GetMembersInfo(typeInfo.Nodes, type.GetProperties(), "Properties");
+            GetMembersInfo(typeInfo.Nodes, type.GetMethods(), "Methods");
+        }
+
+        private void GetMembersInfo(ObservableCollection<Node> tree, object[] members, string header)
+        {
+            if (members.Length > 0)
             {
-                Node fieldsInfo = new Node("Fields");
-                typeInfo.Nodes.Add(fieldsInfo);
-                foreach(var field in fields)
+                Node membersInfo = new Node(header);
+                tree.Add(membersInfo);
+                foreach (var member in members)
                 {
-                    Node fieldInfo = new Node(field.ToString());
-                    fieldsInfo.Nodes.Add(fieldInfo);
+                    Node memberInfo = new Node(member.ToString());
+                    membersInfo.Nodes.Add(memberInfo);
                 }
             }
         }
